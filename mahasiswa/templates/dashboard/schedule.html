@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalender Bulanan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .calendar {
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .calendar-header {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background-color: #dee2e6;
+        }
+
+        .day {
+            padding: 1rem;
+            background-color: #ffffff;
+            text-align: center;
+            border: 1px solid #dee2e6;
+            position: relative;
+        }
+
+        .day:hover {
+            background-color: #f8f9fa;
+            cursor: pointer;
+        }
+
+        .day.active {
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+
+        .task {
+            background-color: #007bff;
+            color: white;
+            padding: 0.25rem;
+            border-radius: 0.25rem;
+            margin-top: 0.25rem;
+        }
+
+        .task-time {
+            font-size: 0.8rem;
+            color: #f8f9fa;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-12 w-100 m-0">
+        <h2 class="text-center">Kalender Bulanan</h2>
+
+        <div class="calendar mt-12 w-100" id="calendar">
+            <div class="calendar-header w-100">
+                <button class="btn btn-light" id="prevMonth">&lt;</button>
+                <span id="monthYear" class="h5"></span>
+                <button class="btn btn-light" id="nextMonth">&gt;</button>
+            </div>
+
+            <div class="calendar-days w-100" id="calendarDays">
+                <div class="day">Sun</div>
+                <div class="day">Mon</div>
+                <div class="day">Tue</div>
+                <div class="day">Wed</div>
+                <div class="day">Thu</div>
+                <div class="day">Fri</div>
+                <div class="day">Sat</div>
+            </div>
+        </div>
+
+        <!-- Modal for adding tasks -->
+        <div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="taskModalLabel">Tambah Tugas</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="taskForm">
+                            <div class="mb-3">
+                                <label for="taskName" class="form-label">Nama Tugas</label>
+                                <input type="text" class="form-control" id="taskName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="taskDate" class="form-label">Tanggal</label>
+                                <input type="date" class="form-control" id="taskDate" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="taskTime" class="form-label">Waktu</label>
+                                <input type="time" class="form-control" id="taskTime" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Tambah Tugas</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const calendarDays = document.getElementById('calendarDays');
+        const monthYear = document.getElementById('monthYear');
+        const prevMonthBtn = document.getElementById('prevMonth');
+        const nextMonthBtn = document.getElementById('nextMonth');
+
+        let currentDate = new Date();
+
+        function renderCalendar(date) {
+            // Clear previous days
+            calendarDays.innerHTML = `
+            <div class="day">Sun</div>
+            <div class="day">Mon</div>
+            <div class="day">Tue</div>
+            <div class="day">Wed</div>
+            <div class="day">Thu</div>
+            <div class="day">Fri</div>
+            <div class="day">Sat</div>
+            `;
+
+            // Set the month and year
+            monthYear.textContent = date.toLocaleString('default', {
+                month: 'long',
+                year: 'numeric'
+            });
+
+            const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+            const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+            // Add empty divs for the days of the week before the first day of the month
+            for (let i = 0; i < firstDay.getDay(); i++) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.classList.add('day');
+                calendarDays.appendChild(emptyDiv);
+            }
+
+            // Add days of the month
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.classList.add('day');
+                dayDiv.textContent = day;
+                dayDiv.setAttribute('data-date',
+                    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+                );
+
+                // Add event listener for adding tasks
+                dayDiv.addEventListener('click', () => {
+                    const taskModal = new bootstrap.Modal(document.getElementById('taskModal'));
+                    document.getElementById('taskDate').value =
+                        `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    taskModal.show();
+                });
+
+                calendarDays.appendChild(dayDiv);
+            }
+        }
+
+        prevMonthBtn.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar(currentDate);
+        });
+
+        nextMonthBtn.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar(currentDate);
+        });
+
+        document.getElementById('taskForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const taskName = document.getElementById('taskName').value;
+            const taskDate = document.getElementById('taskDate').value;
+            const taskTime = document.getElementById('taskTime').value;
+
+            // Find the day that matches the task date
+            const selectedDay = document.querySelector(`.day[data-date="${taskDate}"]`);
+
+            if (selectedDay) {
+                const taskElement = document.createElement('div');
+                taskElement.classList.add('task');
+                taskElement.innerHTML = `<span class="task-time">${taskTime}</span> ${taskName}`;
+                selectedDay.appendChild(taskElement);
+            }
+
+            // Close the modal
+            const taskModal = bootstrap.Modal.getInstance(document.getElementById('taskModal'));
+            taskModal.hide();
+            document.getElementById('taskForm').reset();
+        });
+
+        // Initial render
+        renderCalendar(currentDate);
+    </script>
+</body>
+
+</html>

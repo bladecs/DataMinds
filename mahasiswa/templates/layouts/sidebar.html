@@ -1,0 +1,114 @@
+{% block main %} {% load static %}
+<div
+  class="d-flex flex-column flex-shrink-0 p-3 text-white sidebar"
+  style="width: 280px"
+>
+  <a
+    href="/"
+    class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
+  >
+    <img
+      src="{% static 'img/logo.png' %}"
+      alt="logo"
+      class="bi me-2"
+      style="width: 60px"
+    />
+    <span class="fs-4">DataMinds</span>
+  </a>
+  <hr />
+  <ul class="nav nav-pills flex-column mb-auto">
+    <li class="nav-item">
+      <a
+        href="{% url 'dashboard' %}"
+        class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% else %}text-white{% endif %}"
+        aria-current="page"
+      >
+        <svg class="bi me-2" width="16" height="16">
+          <use xlink:href="#home" />
+        </svg>
+        Dashboard
+      </a>
+    </li>
+    <li>
+      <a
+        href="{% url 'grafik' %}"
+        class="nav-link {% if request.resolver_match.url_name == 'grafik' %}active{% else %}text-white{% endif %}"
+      >
+        <svg class="bi me-2" width="16" height="16">
+          <use xlink:href="#table" />
+        </svg>
+        Grafik
+      </a>
+    </li>
+    {% if request.session.jabatan == 'ketua_kelas' %}
+    <li>
+      <a
+        href="{% url 'input' %}"
+        class="nav-link {% if request.resolver_match.url_name == 'input' %}active{% else %}text-white{% endif %}"
+      >
+        <svg class="bi me-2" width="16" height="16">
+          <use xlink:href="#people-circle" />
+        </svg>
+        Input
+      </a>
+    </li>
+    <li>
+      <a
+        href="{% url 'schedule' %}"
+        class="nav-link {% if request.resolver_match.url_name == 'schedule' %}active{% else %}text-white{% endif %}"
+      >
+        <svg class="bi me-2" width="16" height="16">
+          <use xlink:href="#people-circle" />
+        </svg>
+        Schedule
+      </a>
+    </li>
+    <li>
+      <a
+        href="{% url 'attendance' %}"
+        class="nav-link {% if request.resolver_match.url_name == 'attendance' %}active{% else %}text-white{% endif %}"
+      >
+        <svg class="bi me-2" width="16" height="16">
+          <use xlink:href="#people-circle" />
+        </svg>
+        Attendance
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+  <hr />
+  <div class="dropdown">
+    <a
+      href="#"
+      class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+      id="dropdownUser1"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+    >
+      <img
+        src="{% static 'img/user.svg' %}"
+        alt=""
+        style="color: white"
+        width="32"
+        height="32"
+        class="rounded-circle me-2"
+      />
+      <strong>{{ user }}</strong>
+    </a>
+    <ul
+      class="dropdown-menu dropdown-menu-dark text-small shadow"
+      aria-labelledby="dropdownUser1"
+    >
+      <li>
+        <a class="dropdown-item" href="{% url 'profile' %}">Profile</a>
+      </li>
+      <li>
+        <hr class="dropdown-divider" />
+      </li>
+      <li>
+        <a class="dropdown-item" href="{% url 'logout' %}">Sign out</a>
+      </li>
+    </ul>
+  </div>
+</div>
+{% endblock %}
