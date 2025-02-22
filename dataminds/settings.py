@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'dataminds.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-MONGODB_URI = os.getenv('MONGODB_URI','mongodb+srv://bladecs86:uO8OM78klybfdExw@cluster0.e4gqjvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+MONGODB_URI = os.getenv('MONGODB_URI',"isi sama link mongo atlas kalian")
 client = MongoClient(MONGODB_URI)
 db = client['data_kelas_3aec']
 
